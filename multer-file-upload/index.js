@@ -27,7 +27,10 @@ const upload = multer({
 //Init App
 const app = express()
 
-app.use(express.static(path.join(__dirname, 'frontend')))
+//Static page
+//app.use(express.static(path.join(__dirname, 'frontend')))
+//React page
+app.use(express.static(path.join(__dirname, 'frontend', 'react-frontend', 'build')))
 
 //Post request 
 app.post('/upload', (req, res) => {
