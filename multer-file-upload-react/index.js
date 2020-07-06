@@ -29,7 +29,7 @@ const app = express()
 
 //Static page
 //app.use(express.static(path.join(__dirname, 'frontend')))
-//React page
+//React page path to build folder
 app.use(express.static(path.join(__dirname, 'frontend', 'react-frontend', 'build')))
 
 //Post request 
