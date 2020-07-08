@@ -1,4 +1,4 @@
 # node-express-mysql
-Node Express server with MySQL DB and connected React frontend
+Node Express server with MySQL DB and connected React.js frontend
 
 
