@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const mysql = require('mysql')
+require("dotenv").config()
 
 const logger = require('./middleware/logger')
 
@@ -8,8 +9,8 @@ const logger = require('./middleware/logger')
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
-    database: 'nodemysql'
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 })
 //connect to db
 db.connect((err) => {
