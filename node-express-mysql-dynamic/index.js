@@ -1,7 +1,6 @@
 const express = require('express')
 const path = require('path')
 const mysql = require('mysql')
-const membersData = require('./MembersData')
 
 const logger = require('./middleware/logger')
 
@@ -20,7 +19,7 @@ db.connect((err) => {
 
 const app = express()
 
-//Route: create db if not created in phpmyadmin (throw errors if database is already specified)
+//SQL DB Route: create db if not created in phpmyadmin (throw errors if database is already specified)
 app.get('/createdb', (req, res) => {
     let sql = 'CREATE DATABASE nodemysql'
 
@@ -31,7 +30,7 @@ app.get('/createdb', (req, res) => {
     })
 })
 
-//Route: create table
+//SQL DB Route: create table
 app.get('/creatememberstable', (req, res) => {
     let sql = "CREATE TABLE members(id int AUTO_INCREMENT, name VARCHAR(255), email VARCHAR(255), active VARCHAR(255) DEFAULT 'active', PRIMARY KEY(id))"
 
@@ -42,9 +41,15 @@ app.get('/creatememberstable', (req, res) => {
     })
 })
 
-//Route: Insert member (static)
+//SQL DB Route: Insert member 
 app.get('/addmember', (req, res) => {
-    let member = { name: 'Bob', email: " test@email.com", active: "active" }
+    //let member = { name: 'Bob', email: " test@email.com", active: "active" } (static)
+
+    const member = { //new memberdata (dynamic) e.g. http://localhost:5000/addmember?name=test&email=test@email.com
+        name: req.query.name,
+        email: req.query.email,
+        active: 'active'
+    }
     let sql = 'INSERT INTO members SET ?' //? - parameter to take in member
     let query = db.query(sql, member, (err, result) => {
         if (err) throw err;
@@ -53,7 +58,7 @@ app.get('/addmember', (req, res) => {
     })
 })
 
-//Route: select members
+//SQL DB Route: select members
 app.get('/getmembers', (req, res) => {
     let sql = "SELECT * FROM members"
 
@@ -64,7 +69,7 @@ app.get('/getmembers', (req, res) => {
     })
 })
 
-//Route: select single member (static)
+//SQL DB Route: select single member (static)
 app.get('/getmember/:id', (req, res) => {
     let sql = `SELECT * FROM members WHERE id = ${req.params.id}`
 
@@ -75,9 +80,10 @@ app.get('/getmember/:id', (req, res) => {
     })
 })
 
-//Route: update single member (static)
+//SQL DB Route: update single member 
 app.get('/updatemember/:id', (req, res) => {
-    let newName = 'Updated Jane'
+    //let newName = 'Updated Jane' //(static)
+    let newName = req.query.name //(dynamic) e.g. http://localhost:5000/updatemember/1?name=updatedname
     let sql = `UPDATE members SET name = '${newName}' WHERE id = ${req.params.id}`
 
     db.query(sql, (err, result) => {
@@ -87,7 +93,7 @@ app.get('/updatemember/:id', (req, res) => {
     })
 })
 
-//Route: delete single member (static)
+//SQL DB Route: delete single member (static)
 app.get('/deletemember/:id', (req, res) => {
     let sql = `DELETE FROM members WHERE id = ${req.params.id}`
 
