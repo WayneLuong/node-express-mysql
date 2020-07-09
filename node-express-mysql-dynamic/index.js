@@ -89,7 +89,6 @@ app.get('/updatemember/:id', (req, res) => {
 
 //Route: delete single member (static)
 app.get('/deletemember/:id', (req, res) => {
-    let newName = 'Updated Jane'
     let sql = `DELETE FROM members WHERE id = ${req.params.id}`
 
     db.query(sql, (err, result) => {
