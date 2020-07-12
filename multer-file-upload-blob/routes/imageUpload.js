@@ -7,12 +7,6 @@ var fs = require('fs');
 
 const checkFileType = require('../checkFileType')
 
-function base64_decode(base64Image, file) {
-    fs.writeFileSync(file, base64Image);
-    console.log('******** File created from base64 encoded string ********');
-
-}
-
 //Create db connection
 const db = mysql.createConnection({
     host: 'localhost',
@@ -41,10 +35,10 @@ const upload = multer({
     storage: storage,
     limits: { fileSize: 10000000 }, //file size limit in bytes
     //Filter by file type
-    //fileFilter: (req, file, cb) => {
-    //Pass file to check file type
-    //checkFileType(file, cb);
-    //}
+    /* fileFilter: (req, file, cb) => {
+        //Pass file to check file type
+        checkFileType(file, cb);
+    } */
 }).single('myImage') //single file - takes in name // can take in multiple
 
 //Post request 
@@ -66,11 +60,11 @@ router.post('/', (req, res) => {
                 db.query(sql, (err, result) => {
                     if (err) throw err;
                     //logs the file information, for databases
-                    //console.log(req.file, contents, result)
+                    console.log(req.file, contents, result)
                     res.send(`Uploaded: ${req.file.filename}`)
                 })
 
-                // delete directory recursively
+                // delete directory files recursively
                 const dir = path.join(path.dirname(require.main.filename), 'public', 'uploads');
                 fs.readdir(dir, (err, files) => {
                     if (err) throw err;
@@ -93,8 +87,11 @@ router.get('/', (req, res) => {
     //Return JSON data
     db.query(sql, (err, result) => {
         if (err) throw err;
-
-        res.json(result)
+        const images = result.map(arg => {
+            arg.file = `data:${arg.mimeType};base64,` + arg.file
+            return arg
+        })
+        res.json(images)
     })
 })
 
