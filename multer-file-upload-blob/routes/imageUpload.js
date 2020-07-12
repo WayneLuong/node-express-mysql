@@ -41,7 +41,7 @@ const upload = multer({
     } */
 }).single('myImage') //single file - takes in name // can take in multiple
 
-//Post request 
+//Post files request 
 router.post('/', (req, res) => {
     upload(req, res, (err) => {
         if (err) {
@@ -64,7 +64,7 @@ router.post('/', (req, res) => {
                     res.send(`Uploaded: ${req.file.filename}`)
                 })
 
-                // delete directory files recursively
+                // delete directory files recursively after inserting to db
                 const dir = path.join(path.dirname(require.main.filename), 'public', 'uploads');
                 fs.readdir(dir, (err, files) => {
                     if (err) throw err;
@@ -81,12 +81,14 @@ router.post('/', (req, res) => {
     })
 })
 
+//Get files
 router.get('/', (req, res) => {
     let sql = "SELECT * FROM images"
 
     //Return JSON data
     db.query(sql, (err, result) => {
         if (err) throw err;
+        //Maps the base64 encoding to readable format in html
         const images = result.map(arg => {
             arg.file = `data:${arg.mimeType};base64,` + arg.file
             return arg
