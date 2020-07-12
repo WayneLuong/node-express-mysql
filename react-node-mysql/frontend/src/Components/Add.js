@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-export default function Add() {
+export default function Add({ addMember }) {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
 
@@ -11,8 +11,9 @@ export default function Add() {
     const handleEmailChange = (e) => {
         setEmail(e.target.value)
     }
-    const handleSubmit = () => {
-        axios.post(`http://localhost:5000/api/members/add?name=${name}&email=${email}`)
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        addMember(name, email)
     }
 
     return (

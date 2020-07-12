@@ -44,7 +44,10 @@ router.delete('/delete/:id', (req, res) => {
     db.query(sql, (err, result) => {
         if (err) throw err;
         console.log(result)
-        res.send(`Member ${req.params.id} deleted ..`)
+        res.json({
+            msg: `Member ${req.params.id} deleted ..`,
+            data: result
+        })
     })
 })
 
@@ -54,12 +57,16 @@ router.post('/add', (req, res) => {
 
     let sql = `INSERT INTO members (name, email) VALUES ('${name}', '${email}')` //use '' for String data
 
-    db.query(sql, (err, result) => {
-        if (err) throw err;
-        console.log(result)
-        res.send({ msg: 'Member added...', data: result })
-        //res.redirect('/')
-    })
+    if (!name || !email) { //Validation
+        return res.status(400).json({ msg: `Please include name and email` })
+    } else {
+        db.query(sql, (err, result) => {
+            if (err) throw err;
+            console.log(result)
+            res.json({ msg: 'Member added...', data: { name, email } })
+            //res.redirect('/')
+        })
+    }
 })
 
 //Udate single member 
@@ -71,7 +78,15 @@ router.put('/update/:id', (req, res) => {
     db.query(sql, (err, result) => {
         if (err) throw err;
         console.log(result)
-        res.json({ msg: `Member ${req.params.id}, name: ${newName} - email: ${newEmail} updated ..` })
+        res.json({
+            msg: `Member ${req.params.id}, name: ${newName} - email: ${newEmail} updated ..`,
+            data: {
+                id: req.params.id,
+                name: newName,
+                email: newEmail,
+                active: 'active'
+            }
+        })
     })
 })
 
