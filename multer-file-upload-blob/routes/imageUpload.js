@@ -66,9 +66,22 @@ router.post('/', (req, res) => {
                 db.query(sql, (err, result) => {
                     if (err) throw err;
                     //logs the file information, for databases
-                    console.log(req.file, contents, result)
+                    //console.log(req.file, contents, result)
                     res.send(`Uploaded: ${req.file.filename}`)
                 })
+
+                // delete directory recursively
+                const dir = path.join(path.dirname(require.main.filename), 'public', 'uploads');
+                fs.readdir(dir, (err, files) => {
+                    if (err) throw err;
+
+                    for (const file of files) {
+                        fs.unlink(path.join(dir, file), err => {
+                            if (err) throw err;
+                        });
+                    }
+                });
+
             }
         }
     })
